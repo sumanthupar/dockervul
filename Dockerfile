@@ -1,20 +1,33 @@
-# Use an outdated base image (this is an example of using a vulnerable version)
-FROM node:10
+# Use an outdated or unmaintained base image (e.g., Ubuntu 16.04, not updated anymore)
+FROM ubuntu:16.04
 
-# Install packages without updating package lists (leads to using outdated packages)
-RUN apt-get update && apt-get install -y wget curl
+# Install unnecessary packages and utilities (exposes unnecessary attack surface)
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    vim \
+    git \
+    build-essential \
+    && apt-get clean
 
-# Install unnecessary tools (exposing unnecessary attack surface)
-RUN apt-get install -y vim
+# Install packages without updating or verifying sources (outdated or vulnerable packages)
+RUN apt-get update && apt-get install -y \
+    openssl \
+    net-tools \
+    && apt-get clean
 
-# Running as root without least privilege (leads to privilege escalation risk)
+# Expose unnecessary ports (for testing purposes, assume no need for these)
+EXPOSE 8080 5000
+
+# Allow root user (insecure, containers should avoid running as root)
 USER root
 
-# Expose sensitive environment variables directly (leaks sensitive data)
-ENV SECRET_KEY=mysecretkey123
+# Set insecure environment variables, such as hardcoded secrets
+ENV DB_PASSWORD=mySuperSecretPassword123
+ENV API_KEY=1234567890abcdef
 
-# Use of hard-coded credentials or secrets
-ENV DB_PASSWORD=somepassword
+# Grant overly permissive permissions to files
+RUN chmod -R 777 /usr/local
 
-# Running the application as root (not recommended)
-CMD ["node", "/app/index.js"]
+# Use insecure default command (running as root with unnecessary commands)
+CMD ["bash"]
