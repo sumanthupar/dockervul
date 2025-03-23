@@ -2,7 +2,7 @@
 FROM node:10
 
 # Install packages without updating package lists (leads to using outdated packages)
-RUN apt-get install -y wget curl
+RUN apt-get update && apt-get install -y wget curl
 
 # Install unnecessary tools (exposing unnecessary attack surface)
 RUN apt-get install -y vim
