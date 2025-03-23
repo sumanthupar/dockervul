@@ -13,10 +13,6 @@ USER root
 # Expose sensitive environment variables directly (leaks sensitive data)
 ENV SECRET_KEY=mysecretkey123
 
-# Running applications with insecure permissions
-COPY app /app
-RUN chmod -R 777 /app
-
 # Use of hard-coded credentials or secrets
 ENV DB_PASSWORD=somepassword
 
